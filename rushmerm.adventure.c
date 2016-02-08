@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
 
 
 // Global Variables
@@ -21,6 +22,7 @@ void pickRooms(int array[]);
 void createRooms();
 void createConnections();
 void createTypes();
+void game();
 
 
 // main function
@@ -51,11 +53,14 @@ int main() {
 
 	createTypes();
 
+	game();
+
 	return 0;
 }
 
 
 void createRooms() {
+
 
 	FILE* roomFiles[10];
 
@@ -249,3 +254,58 @@ void pickRooms(int array[]) {
 
 // The structure of this random function was found on:
 // http://stackoverflow.com/questions/23285326/non-repeating-random-number-generator-in-c
+
+void game() {
+	// variables for gameplay
+
+	// Array to store user's path to final room
+	int i, j;
+	int roomPath[50] = {-1};
+	bool foundEnd = false;
+	int numSteps = 0;
+	int curRoom = 0;
+
+	
+
+	// main loop for the game
+	while(!foundEnd) {
+		bool validUserSelection = false;
+		printf("CURRENT LOCATION: %s\n", selectedNames[curRoom]);
+		printf("POSSIBLE CONNECTIONS: ");
+		for(i = 0; i < 7; i++) {
+			if(connections[curRoom][i] == 1 && (i != curRoom)) {
+				printf("%s, ", selectedNames[i]);
+			}
+		}
+		printf("\n");
+		
+		while(!validUserSelection) {
+			
+			char userSelection[25];
+			printf("WHERE TO? >");
+			fgets(userSelection, 25, stdin);
+			strtok(userSelection, "\n");
+			printf("%s", userSelection);
+			for(i = 0; i < 7; i ++) {
+				if(strcmp(userSelection, selectedNames[i]) == 0) {
+					validUserSelection = true;
+					curRoom = i;
+					if(i == 6) {
+						foundEnd = true;
+					}
+				}
+			}
+			if(!validUserSelection) {
+				printf("HUH? I DON'T UNDERSTAND THAT ROOM. TRY AGAIN\n\n");
+			}
+			else {
+				printf("\n\n");
+			}
+			
+		}
+
+
+
+	}
+
+}
