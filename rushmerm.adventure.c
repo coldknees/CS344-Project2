@@ -211,6 +211,8 @@ void createConnections() {
 }
 
 
+// This function in called after the call to createConnection() to append
+// the type of room to each file
 void createTypes() {
 	int i;
 	FILE* temp;
@@ -269,27 +271,32 @@ void game() {
 
 	// main loop for the game
 	while(!foundEnd) {
-		bool validUserSelection = false;
-		printf("CURRENT LOCATION: %s\n", selectedNames[curRoom]);
-		printf("POSSIBLE CONNECTIONS: ");
-		for(i = 0; i < 7; i++) {
-			if(connections[curRoom][i] == 1 && (i != curRoom)) {
-				printf("%s, ", selectedNames[i]);
-			}
-		}
-		printf("\n");
 		
+		bool validUserSelection = false;
 		while(!validUserSelection) {
+
+
+			printf("CURRENT LOCATION: %s\n", selectedNames[curRoom]);
+			printf("POSSIBLE CONNECTIONS: ");
+			for(i = 0; i < 7; i++) {
+				if(connections[curRoom][i] == 1 && (i != curRoom)) {
+					printf("%s, ", selectedNames[i]);
+				}
+			}
+			printf("\n");
 			
 			char userSelection[25];
 			printf("WHERE TO? >");
 			fgets(userSelection, 25, stdin);
 			strtok(userSelection, "\n");
-			printf("%s", userSelection);
+
 			for(i = 0; i < 7; i ++) {
-				if(strcmp(userSelection, selectedNames[i]) == 0) {
+				// Check that the name is valid and that there is a connection
+				if(strcmp(userSelection, selectedNames[i]) == 0 && connections[curRoom][i] == 1) {
 					validUserSelection = true;
 					curRoom = i;
+					roomPath[numSteps] = curRoom;
+					numSteps++;
 					if(i == 6) {
 						foundEnd = true;
 					}
@@ -303,9 +310,13 @@ void game() {
 			}
 			
 		}
-
-
-
+	}
+	if(foundEnd) {
+		printf("YOU HAVE FOUND THE END ROOM. CONGRATULATIONS!\n");
+		printf("YOU TOOK %d STEPS. YOUR PATH TO VICTORY WAS:\n", numSteps);
+		for(i = 0; i < numSteps; i++) {
+			printf("%s\n", selectedNames[roomPath[i]]);
+		}
 	}
 
 }
